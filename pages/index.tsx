@@ -8,12 +8,13 @@ import { useEffect, useRef, useState } from "react";
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
 
   const handleSend = async (message: Message) => {
     const updatedMessages = [...messages, message];
@@ -32,8 +33,10 @@ export default function Home() {
     });
 
     if (!response.ok) {
+      console.log("resp", response);
       setLoading(false);
-      throw new Error(response.statusText);
+      setErrorMessage(`Error ${response.status} ${response.statusText}`);
+      return;
     }
 
     const data = response.body;
@@ -80,10 +83,27 @@ export default function Home() {
     setMessages([
       {
         role: "assistant",
-        content: `Hi there! I'm Chatbot UI, an AI assistant. I can help you with things like answering questions, providing information, and helping with tasks. How can I help you?`
+        content: `What's on your mind?`
       }
     ]);
   };
+  const handleShuffle = () => {
+
+    // Choose one messageText randomly from a list of programming gripes
+    const gripes = [
+      "We have too much XML",
+      "We don't have enough XML",
+      "We want to switch to SOAP",
+      "We never finished migrating the Monolith to Microservices"
+    ]
+    // set messageText to random gripe
+    const text = gripes[Math.floor(Math.random() * gripes.length)]
+
+    handleSend({
+      role: "user",
+      content: text
+    })
+  }
 
   useEffect(() => {
     scrollToBottom();
@@ -91,10 +111,10 @@ export default function Home() {
 
   useEffect(() => {
     setMessages([
-      // {
-      //   role: "assistant",
-      //   content: `Hi there! I'm Chatbot UI, an AI assistant. I can help you with things like answering questions, providing information, and helping with tasks. How can I help you?`
-      // }
+      {
+        role: "assistant",
+        content: `What's on your mind?`
+      }
     ]);
   }, []);
 
@@ -126,8 +146,10 @@ export default function Home() {
               loading={loading}
               onSend={handleSend}
               onReset={handleReset}
+              onShuffle={handleShuffle}
             />
             <div ref={messagesEndRef} />
+            {errorMessage && <div><p>{errorMessage}</p></div>}
           </div>
         </div>
         <Footer />

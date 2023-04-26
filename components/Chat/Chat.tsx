@@ -4,19 +4,22 @@ import { ChatInput } from "./ChatInput";
 import { ChatLoader } from "./ChatLoader";
 import { ChatMessage } from "./ChatMessage";
 import { ResetChat } from "./ResetChat";
+import { Shuffle } from "./Shuffle";
 
 interface Props {
   messages: Message[];
   loading: boolean;
   onSend: (message: Message) => void;
   onReset: () => void;
+  onShuffle: () => void;
 }
 
-export const Chat: FC<Props> = ({ messages, loading, onSend, onReset }) => {
+export const Chat: FC<Props> = ({ messages, loading, onSend, onReset, onShuffle }) => {
   return (
     <>
       <div className="flex flex-row justify-between items-center mb-4 sm:mb-8">
         <ResetChat onReset={onReset} />
+        <Shuffle onShuffle={onShuffle} />
       </div>
 
       <div className="flex flex-col rounded-lg px-2 sm:p-4 sm:border border-neutral-300">

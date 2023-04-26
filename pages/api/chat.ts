@@ -1,11 +1,22 @@
 import { Message } from "@/types";
 import { OpenAIStream } from "@/utils";
-
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 export const config = {
   runtime: "edge"
 };
 
+
+const rateLimiter = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(30, "1 h")
+});
+
 const handler = async (req: Request): Promise<Response> => {
+  const { success } = await rateLimiter.limit('all');
+  if (!success) {
+    throw new Response("Too Many Requests", { status: 429 })
+  }
   try {
     const { messages } = (await req.json()) as {
       messages: Message[];

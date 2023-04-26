@@ -2,6 +2,7 @@ import { Message, OpenAIModel } from "@/types";
 import { createParser, ParsedEvent, ReconnectInterval } from "eventsource-parser";
 
 
+
 const prompt = `Act as an expert in software maintenance familiar with the work of Martin Fowler, Micheal Feathers, Arlo Belshee, Chelsea Troy, Marriane Belloti, Dave Farley, GeePaw Hill, J. B. Rainsberger, Kent Beck, Llewellyn Falco, Joshua Kerievsky, James Shore, Sandi Metz, and Kelsey Hightower. I will give you a situation and you will respond with:
 
 1) Name 3 experts best suited to comment on this issue, including diverse points of view. 
@@ -29,7 +30,8 @@ export const OpenAIStream = async (messages: Message[]) => {
     },
     method: "POST",
     body: JSON.stringify({
-      model: OpenAIModel.DAVINCI_TURBO,
+      // model: OpenAIModel.GPT_4,
+      model: OpenAIModel.GPT_3_5_TURBO,
       messages: [
         {
           role: "system",
